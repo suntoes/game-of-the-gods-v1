@@ -105,7 +105,7 @@ export const GameOptions = () => {
           {useColorModeValue('dark', 'light')} mode
         </Text>
       </Text>
-      <Modal isOpen={modalState} onClose={onClose} closeOnOverlayClick={false}>
+      <Modal isOpen={modalState} onClose={onClose} closeOnOverlayClick={false} isCentered={true}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{modalState?.title}</ModalHeader>
