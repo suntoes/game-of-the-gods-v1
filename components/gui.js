@@ -71,6 +71,17 @@ export const GameOptions = () => {
           }
         })
 
+  const winAnnounce = winner => setModalState({
+      title: (winner === 'l' ? 'light' : 'dark') + ' won!',
+      body: 'would you like to reset the match now?',
+      secondary: onClose,
+      primary: () => {
+        resetFunc()
+        clearLocalSesh()
+        onClose()
+      }
+    })
+
   useEffect(() => {
     if (loadPrevFunc) {
       const { date } = JSON.parse(
@@ -93,6 +104,12 @@ export const GameOptions = () => {
       })
     }
   }, [loadPrevFunc])
+
+  useEffect(() => {
+    const {winner} = boardState
+    if(winner) winAnnounce(winner)
+// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boardState])
 
   return (
     <>
