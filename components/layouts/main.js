@@ -11,8 +11,8 @@ const Main = ({ children }) => {
           content="An abstract 3d board game based on Maya Chess."
         />
         <meta name="author" content="Mar Santos" />
-        {/* <link rel="apple-touch-icon" href="apple-touch-icon.png" /> */}
-        {/* <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" /> */}
+        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="twitter:title" content="Game of the Gods" />
         <meta name="twitter:card" content="summary_large_image" />
