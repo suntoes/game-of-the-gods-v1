@@ -321,13 +321,15 @@ const Board = () => {
           child.position.x = scene.children[base].position.x
           child.position.z = scene.children[base].position.z
           child.material.visible = isShown
-
+          child.material.transparent = true
           // Lift chess piece on select or not
-          if (name === selectedPiece && false) {
-            child.position.y = 3 + Math.sin(time / 200) / 10
-            child.rotation.y += 1 / 50
+          if (name === selectedPiece) {
+            child.material.opacity = Math.round(Math.abs(Math.sin(time/400)) * 100)/100
+            // child.position.y = 3 + Math.sin(time / 200) / 10
+            // child.rotation.y += 1 / 50
           } else {
             child.rotation.y = utils.DegToRad(rotateY)
+            child.material.opacity = 1
           }
         }
       }
@@ -391,11 +393,22 @@ const Board = () => {
           if (turnPieceIsPicked) {
             selectedPiece = nearestPieceIntersect.object.name.split('-')[0]
             const rawMoveSet = PieceHelper.getMoveSet(selectedPiece, BoardState)
-            moveSet = utils.ValidateMoveSet(
+            const validatedMoveSet = utils.ValidateMoveSet(
               selectedPiece,
               rawMoveSet,
-              BoardState
+              BoardState 
             )
+
+            if(validatedMoveSet) moveSet = validatedMoveSet
+            else {
+              selectedPiece = PieceHelper.isLight(selectedPiece) ? "l" : "L"
+              const newRawMoveSet = PieceHelper.getMoveSet(selectedPiece, BoardState)
+              moveSet = utils.ValidateMoveSet(
+                selectedPiece,
+                newRawMoveSet,
+                BoardState
+              )
+            }
           }
         } else if (intersects.length) {
           // If player cliked to nothing
