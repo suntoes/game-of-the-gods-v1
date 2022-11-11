@@ -37,6 +37,8 @@ const Board = () => {
   const BoardState = useRef()
   const moveSet = useRef()
 
+  const rmvDash = str => str.split("-")[0] || ""
+
   const handleWindowResize = useCallback(() => {
     const { current } = container
     if (current && renderer && camera) {
@@ -269,7 +271,7 @@ const Board = () => {
       for (let i = 0; i < scene.children.length; i++) {
         const child = scene.children[i]
 
-        if ((child.name.split('-')[0] || '') === 'tile') {
+        if (rmvDash(child.name) === 'tile') {
           // Tile condition
           const isLight = (Math.floor(i / 8) * 7) % 2
           if (moveSet.some(move => move.indexes.includes(i)))
@@ -279,7 +281,7 @@ const Board = () => {
           else if (child.material)
             // @ts-ignore
             child.material.color.set(isLight ? lightTone : darkTone) // @ts-ignore
-        } else if ((child.name.split('-')[0] || '').toLowerCase() === 'tmp') {
+        } else if (rmvDash(child.name).toLowerCase() === 'tmp') {
           // Temple condition
           let templeIndex
           switch (child.name) {
@@ -311,7 +313,7 @@ const Board = () => {
           child.material.color.set(0xb0b0b0)
         } else if (child.material) {
           // Piece condition
-          const name = child.name.split('-')[0]
+          const name = rmvDash(child.name)
           const _variation = Number(child.name.split('-')[1]) || 0
           const { base, indexes, variation, rotateY } = BoardState.pieces[name]
           // const isShown = name === "a" && _variation === variation
@@ -340,27 +342,22 @@ const Board = () => {
         raycaster.setFromCamera(mouseClick, camera)
 
         // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects(scene.children)
+        const intersects = raycaster
+          .intersectObjects(scene.children)
+          .filter(({object}) => rmvDash(object.name) !== 'tmp')
 
-        const pieceIntersects = intersects.filter(
-          ({ object }) =>
-            object.name.split('-')[0] !== 'tile' &&
-            object.name.split('-')[0].toLowerCase() !== 'tmp' &&
-            object.name !== 'board'
-        )
-        const nearestIntersect = intersects[0]
+        const pieceIntersects = intersects
+          .filter(({ object }) =>
+            rmvDash(object.name) !== 'tile' 
+            && object.name !== 'board'
+          )
         const nearestPieceIntersect = pieceIntersects[0]
-        const nearestInteresectIsTile =
-          nearestIntersect?.object.name.split('-')[0] === 'tile'
-        const possibleTileNumber = Number(
-          nearestIntersect?.object.name.split('-')[1] || -1
-        )
-        const possibleMove = moveSet.filter(move =>
-          move.indexes.includes(possibleTileNumber)
-        )[0]
+        const nearestIntersect = intersects[0]?.object?.name || ""
+        const nearestInteresectIsTile = rmvDash(nearestIntersect) === 'tile'
+        const possibleTileNumber = Number(nearestIntersect.split('-')[1] || -1)
+        const possibleMove = moveSet.filter(move => move.indexes.includes(possibleTileNumber))[0]
 
-        if (nearestInteresectIsTile && possibleMove) {
-          // If valid move
+        if (nearestInteresectIsTile && possibleMove) { // If valid move
           BoardState.pieces[selectedPiece] = {
             base: possibleMove.base,
             indexes: possibleMove.indexes,
@@ -378,9 +375,8 @@ const Board = () => {
           selectedPiece = undefined
           moveSet = []
           setBoardState(JSON.parse(JSON.stringify(BoardState)))
-        } else if (nearestPieceIntersect) {
-          // If player picked a piece
-          const select = nearestPieceIntersect.object.name.split('-')[0]
+        } else if (nearestPieceIntersect) { // If player picked a piece
+          const select = rmvDash(nearestPieceIntersect.object.name)
           const { currentTurn: turn } = utils.TurnCountToSystem(
             BoardState.turnCount
           )
@@ -388,10 +384,9 @@ const Board = () => {
           const turnPieceIsPicked =
             (turn === 'l' && PieceHelper.isLight(select)) ||
             (turn === 'd' && PieceHelper.isDark(select))
-          //            || true
-
-          if (turnPieceIsPicked) {
-            selectedPiece = nearestPieceIntersect.object.name.split('-')[0]
+          //|| true
+          if (turnPieceIsPicked) { // If picked piece is equal to turn side
+            selectedPiece = rmvDash(nearestPieceIntersect.object.name)
             const rawMoveSet = PieceHelper.getMoveSet(selectedPiece, BoardState)
             const validatedMoveSet = utils.ValidateMoveSet(
               selectedPiece,
@@ -412,8 +407,10 @@ const Board = () => {
           }
         } else if (intersects.length) {
           // If player cliked to nothing
-          selectedPiece = undefined
-          moveSet = []
+          // selectedPiece = undefined
+          // moveSet = []
+          
+          // It's fine
         }
 
         isCastingRay = false
