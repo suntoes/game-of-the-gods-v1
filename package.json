@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "suntoes",
-  "license": "MIT",
+  "license": "GPL",
   "dependencies": {
     "@chakra-ui/react": "^2.2.8",
     "@chakra-ui/icons": "^2.0.8",
