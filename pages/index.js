@@ -18,8 +18,8 @@ const Home = () => (
             fontSize={{ base: '0.55em', sm: '0.8em', md: '1em' }}
             transform={'translateX(9999px)'}
           >
-            learn more about the official Maya Chess{' '}
-            <Link target="_blank" href="https://www.mayachess.com/">
+            learn more or support Maya Chess{' '}
+            <Link target="_blank" href="https://www.kickstarter.com/projects/mayachess/maya-chess-the-game-of-the-gods">
               here <ExternalLinkIcon />
             </Link>
           </Text>
