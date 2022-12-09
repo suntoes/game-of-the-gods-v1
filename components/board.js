@@ -262,7 +262,7 @@ const Board = () => {
           BoardState = boardState
         }
 
-        setLoadPrevFunc(prevSeshTest ? () => loadPrevious : false)
+//        setLoadPrevFunc(prevSeshTest ? () => loadPrevious : false)
         setResetFunc(() => resetThis)
         funcIsNotLoaded = false
       }
@@ -386,23 +386,32 @@ const Board = () => {
             (turn === 'd' && PieceHelper.isDark(select))
           //|| true
           if (turnPieceIsPicked) { // If picked piece is equal to turn side
-            selectedPiece = rmvDash(nearestPieceIntersect.object.name)
+            const tmpSelectedPiece = rmvDash(nearestPieceIntersect.object.name)
             const rawMoveSet = PieceHelper.getMoveSet(selectedPiece, BoardState)
             const validatedMoveSet = utils.ValidateMoveSet(
-              selectedPiece,
+              tmpSelectedPiece,
               rawMoveSet,
               BoardState 
             )
 
-            if(validatedMoveSet) moveSet = validatedMoveSet
+            if(typeof(validatedMoveSet) === "object") {
+              selectedPiece = tmpSelectedPiece
+              moveSet = validatedMoveSet
+            }
             else {
-              selectedPiece = PieceHelper.isLight(selectedPiece) ? "l" : "L"
-              const newRawMoveSet = PieceHelper.getMoveSet(selectedPiece, BoardState)
-              moveSet = utils.ValidateMoveSet(
-                selectedPiece,
+              // Once validatedMoveset is falsey, it returns new id of piece on temple/needs to be moved
+              const newTmpSelectedPiece = validatedMoveset
+              const newRawMoveSet = PieceHelper.getMoveSet(newTmpSelectedPiece, BoardState)
+              const newValidatedMoveSet = utils.ValidateMoveSet(
+                newTmpSelectedPiece,
                 newRawMoveSet,
                 BoardState
               )
+
+              if(typeof(newValidatedMoveSet) === "object") {
+                moveSet = newValidatedMoveSet
+                selectedPiece = newTmpSelectedPiece
+              }
             }
           }
         } else if (intersects.length) {
