@@ -387,7 +387,7 @@ const Board = () => {
           //|| true
           if (turnPieceIsPicked) { // If picked piece is equal to turn side
             const tmpSelectedPiece = rmvDash(nearestPieceIntersect.object.name)
-            const rawMoveSet = PieceHelper.getMoveSet(selectedPiece, BoardState)
+            const rawMoveSet = PieceHelper.getMoveSet(tmpSelectedPiece, BoardState)
             const validatedMoveSet = utils.ValidateMoveSet(
               tmpSelectedPiece,
               rawMoveSet,
@@ -399,8 +399,8 @@ const Board = () => {
               moveSet = validatedMoveSet
             }
             else {
-              // Once validatedMoveset is falsey, it returns new id of piece on temple/needs to be moved
-              const newTmpSelectedPiece = validatedMoveset
+              // Once validatedMoveset is not an object, it returns new id of piece on temple/needs to be moved
+              const newTmpSelectedPiece = validatedMoveSet
               const newRawMoveSet = PieceHelper.getMoveSet(newTmpSelectedPiece, BoardState)
               const newValidatedMoveSet = utils.ValidateMoveSet(
                 newTmpSelectedPiece,
