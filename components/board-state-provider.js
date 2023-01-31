@@ -27,7 +27,7 @@ const BoardStateProvider = props => {
     resetFunc,
     setResetFunc,
     loadPrevFunc,
-    setLoadPrevFunc,
+    setLoadPrevFunc
   }
 
   return (

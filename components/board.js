@@ -30,6 +30,14 @@ const Board = () => {
   const isCastingRay = useRef()
 
   // Chess stuffs
+  const moveSfx =
+    typeof Audio !== 'undefined' ? new Audio('sfx/move.mp3') : undefined
+  const playMoveSfx = () => {
+    if (!moveSfx) return
+    moveSfx.currentTime = 0
+    moveSfx?.play()
+  }
+
   const tileSize = 1
   const darkTone = 0x808080
   const lightTone = 0xfafafa
@@ -37,7 +45,7 @@ const Board = () => {
   const BoardState = useRef()
   const moveSet = useRef()
 
-  const rmvDash = str => str.split("-")[0] || ""
+  const rmvDash = str => str.split('-')[0] || ''
 
   const handleWindowResize = useCallback(() => {
     const { current } = container
@@ -262,7 +270,7 @@ const Board = () => {
           BoardState = boardState
         }
 
-//        setLoadPrevFunc(prevSeshTest ? () => loadPrevious : false)
+        //        setLoadPrevFunc(prevSeshTest ? () => loadPrevious : false)
         setResetFunc(() => resetThis)
         funcIsNotLoaded = false
       }
@@ -326,7 +334,8 @@ const Board = () => {
           child.material.transparent = true
           // Lift chess piece on select or not
           if (name === selectedPiece) {
-            child.material.opacity = Math.round(Math.abs(Math.sin(time/400)) * 100)/100
+            child.material.opacity =
+              Math.round(Math.abs(Math.sin(time / 400)) * 100) / 100
             // child.position.y = 3 + Math.sin(time / 200) / 10
             // child.rotation.y += 1 / 50
           } else {
@@ -344,20 +353,22 @@ const Board = () => {
         // calculate objects intersecting the picking ray
         const intersects = raycaster
           .intersectObjects(scene.children)
-          .filter(({object}) => rmvDash(object.name) !== 'tmp')
+          .filter(({ object }) => rmvDash(object.name) !== 'tmp')
 
-        const pieceIntersects = intersects
-          .filter(({ object }) =>
-            rmvDash(object.name) !== 'tile' 
-            && object.name !== 'board'
-          )
+        const pieceIntersects = intersects.filter(
+          ({ object }) =>
+            rmvDash(object.name) !== 'tile' && object.name !== 'board'
+        )
         const nearestPieceIntersect = pieceIntersects[0]
-        const nearestIntersect = intersects[0]?.object?.name || ""
+        const nearestIntersect = intersects[0]?.object?.name || ''
         const nearestInteresectIsTile = rmvDash(nearestIntersect) === 'tile'
         const possibleTileNumber = Number(nearestIntersect.split('-')[1] || -1)
-        const possibleMove = moveSet.filter(move => move.indexes.includes(possibleTileNumber))[0]
+        const possibleMove = moveSet.filter(move =>
+          move.indexes.includes(possibleTileNumber)
+        )[0]
 
-        if (nearestInteresectIsTile && possibleMove) { // If valid move
+        if (nearestInteresectIsTile && possibleMove) {
+          // If valid move
           BoardState.pieces[selectedPiece] = {
             base: possibleMove.base,
             indexes: possibleMove.indexes,
@@ -372,10 +383,12 @@ const Board = () => {
             utils.DetectWinByCrush(BoardState) ||
             utils.DetectWinByTrap(BoardState)
 
+          playMoveSfx()
           selectedPiece = undefined
           moveSet = []
           setBoardState(JSON.parse(JSON.stringify(BoardState)))
-        } else if (nearestPieceIntersect) { // If player picked a piece
+        } else if (nearestPieceIntersect) {
+          // If player picked a piece
           const select = rmvDash(nearestPieceIntersect.object.name)
           const { currentTurn: turn } = utils.TurnCountToSystem(
             BoardState.turnCount
@@ -385,30 +398,36 @@ const Board = () => {
             (turn === 'l' && PieceHelper.isLight(select)) ||
             (turn === 'd' && PieceHelper.isDark(select))
           //|| true
-          if (turnPieceIsPicked) { // If picked piece is equal to turn side
+          if (turnPieceIsPicked) {
+            // If picked piece is equal to turn side
             const tmpSelectedPiece = rmvDash(nearestPieceIntersect.object.name)
-            const rawMoveSet = PieceHelper.getMoveSet(tmpSelectedPiece, BoardState)
+            const rawMoveSet = PieceHelper.getMoveSet(
+              tmpSelectedPiece,
+              BoardState
+            )
             const validatedMoveSet = utils.ValidateMoveSet(
               tmpSelectedPiece,
               rawMoveSet,
-              BoardState 
+              BoardState
             )
 
-            if(typeof(validatedMoveSet) === "object") {
+            if (typeof validatedMoveSet === 'object') {
               selectedPiece = tmpSelectedPiece
               moveSet = validatedMoveSet
-            }
-            else {
+            } else {
               // Once validatedMoveset is not an object, it returns new id of piece on temple/needs to be moved
               const newTmpSelectedPiece = validatedMoveSet
-              const newRawMoveSet = PieceHelper.getMoveSet(newTmpSelectedPiece, BoardState)
+              const newRawMoveSet = PieceHelper.getMoveSet(
+                newTmpSelectedPiece,
+                BoardState
+              )
               const newValidatedMoveSet = utils.ValidateMoveSet(
                 newTmpSelectedPiece,
                 newRawMoveSet,
                 BoardState
               )
 
-              if(typeof(newValidatedMoveSet) === "object") {
+              if (typeof newValidatedMoveSet === 'object') {
                 moveSet = newValidatedMoveSet
                 selectedPiece = newTmpSelectedPiece
               }
@@ -418,7 +437,6 @@ const Board = () => {
           // If player cliked to nothing
           // selectedPiece = undefined
           // moveSet = []
-          
           // It's fine
         }
 

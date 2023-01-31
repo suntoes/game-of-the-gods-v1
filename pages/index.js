@@ -12,7 +12,11 @@ const Home = () => (
       boxSize="full"
       transform={'translateX(-9999px)'}
     >
-      <Container centerContent maxW="container.xl" justifyContent="space-between">
+      <Container
+        centerContent
+        maxW="container.xl"
+        justifyContent="space-between"
+      >
         <Box w="full" mb={2}>
           <Text
             fontSize={{ base: '0.55em', sm: '0.8em', md: '1em' }}

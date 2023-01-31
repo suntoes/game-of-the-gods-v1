@@ -71,7 +71,8 @@ export const GameOptions = () => {
           }
         })
 
-  const winAnnounce = winner => setModalState({
+  const winAnnounce = winner =>
+    setModalState({
       title: (winner === 'l' ? 'light' : 'dark') + ' won!',
       body: 'would you like to reset the match now?',
       secondary: onClose,
@@ -106,9 +107,9 @@ export const GameOptions = () => {
   }, [loadPrevFunc])
 
   useEffect(() => {
-    const {winner} = boardState
-    if(winner) winAnnounce(winner)
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    const { winner } = boardState
+    if (winner) winAnnounce(winner)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardState])
 
   return (
@@ -122,7 +123,12 @@ export const GameOptions = () => {
           {useColorModeValue('dark', 'light')} mode
         </Text>
       </Text>
-      <Modal isOpen={modalState} onClose={onClose} closeOnOverlayClick={false} isCentered={true}>
+      <Modal
+        isOpen={modalState}
+        onClose={onClose}
+        closeOnOverlayClick={false}
+        isCentered={true}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{modalState?.title}</ModalHeader>
