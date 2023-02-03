@@ -25,6 +25,17 @@ export const Gui = props => {
     boardState.turnCount
   )
 
+  const turnSfx =
+    typeof Audio !== 'undefined' ? new Audio('sfx/turn.mp3') : undefined
+  const playTurnSfx = () => {
+    if (!turnSfx) return
+    turnSfx.currentTime = 0
+    setTimeout(() => turnSfx?.play(), 100)
+  }
+  useEffect(() => {
+    if (remainingMoves === 3) playTurnSfx()
+  }, [remainingMoves])
+
   return (
     <Box>
       {isLoading ? (
